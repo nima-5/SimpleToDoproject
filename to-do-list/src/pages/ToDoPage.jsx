@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import TodoList from '../../components/TodoList/TodoList';
-import TodoForm from '../../components/TodoForm/TodoForm';
-import todoService from '../../services/todoService';
-import './TodoPage.css';
+import TodoList from '../components/ToDoList/ToDoList';  // Fix component path if needed
+import ToDoForm from '../components/TodoForm/ToDoForm';
+import todoService from '../services/todoService';  // Fix the import path
+import './ToDoPage.css';
 
-const TodoPage = () => {
+const ToDoPage = () => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -79,7 +79,6 @@ const TodoPage = () => {
 
   const handleCompleteTodo = async (id, isCompleted) => {
     try {
-      const todoToUpdate = todos.find(todo => todo.id === id);
       const updatedTodo = await todoService.toggleTodoCompletion(id, isCompleted);
       setTodos(todos.map(todo => (todo.id === id ? updatedTodo : todo)));
     } catch (err) {
@@ -108,7 +107,7 @@ const TodoPage = () => {
       <main className="todo-page__content">
         <section className="todo-page__form-section">
           <h2>{isEditing ? 'Edit Todo' : 'Add New Todo'}</h2>
-          <TodoForm 
+          <ToDoForm 
             onSubmit={isEditing 
               ? (data) => handleUpdateTodo(currentTodo.id, data) 
               : handleAddTodo}
@@ -134,4 +133,4 @@ const TodoPage = () => {
   );
 };
 
-export default TodoPage;
+export default ToDoPage;

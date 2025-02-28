@@ -1,23 +1,13 @@
 import axios from 'axios';
 
-// Base URL for the API - adjust based on your backend configuration
+// Update this URL to match your .NET API's URL and port
 const API_BASE_URL = 'http://localhost:5087/api';
 
-// Create axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-});
-
-// Add auth token to requests
-apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token'); // or however you store your auth token
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
-  return config;
 });
 
 // Todo API Service
@@ -77,12 +67,22 @@ const todoService = {
     }
   },
 
-  // Update the completion status of a todo
+  // Add this method to your todoService
   toggleTodoCompletion: async (id, isCompleted) => {
     try {
+      // First get the current todo
       const todo = await todoService.getTodoById(id);
-      const updatedTodo = { ...todo, isCompleted: isCompleted };
-      return await todoService.updateTodo(id, updatedTodo);
+      
+      // Update just the completion status and the update timestamp
+      const updatedTodo = {
+        ...todo,
+        isCompleted: isCompleted,
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Send the update to the API
+      const response = await apiClient.put(`/todo/${id}`, updatedTodo);
+      return response.data;
     } catch (error) {
       console.error(`Error toggling completion for todo ${id}:`, error);
       throw error;
